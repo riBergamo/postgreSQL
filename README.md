@@ -1,2 +1,2 @@
 # postgreSQL
-Alura's PostgreSQL course project
+Script of the PostgreSQL course in Alura
