@@ -142,4 +142,131 @@ SELECT * FROM aluno;
 INSERT INTO aluno (nome) VALUES ('João');
 
 INSERT INTO curso (id, nome) VALUES (5, 'JAVA');
+
+DELETE FROM aluno WHERE id = 2;
+
+DROP TABLE aluno_curso;
+
+CREATE TABLE aluno_curso (
+	aluno_id INTEGER,
+	curso_id INTEGER,
+	PRIMARY KEY (aluno_id, curso_id),
+	
+	FOREIGN KEY (aluno_id) REFERENCES aluno (id) 
+		ON DELETE CASCADE 
+		ON UPDATE CASCADE,
+	FOREIGN KEY (curso_id) REFERENCES curso (id)	
+);
+
+SELECT 	aluno.id   AS aluno_id,
+		aluno.nome AS "Nome do aluno", 
+		curso.id   AS curso_id,
+		curso.nome AS "Nome do curso"
+		FROM aluno
+		JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+		JOIN curso       ON curso.id             = aluno_curso.curso_id;
+
+UPDATE aluno 
+	SET id = 10 WHERE id = 1;
+	
+--aula 6
+
+DROP TABLE funcionarios;
+
+CREATE TABLE funcionarios (
+	id SERIAL PRIMARY KEY,
+	matricula VARCHAR(10),
+	nome VARCHAR(255),
+	sobrenome VARCHAR(255)
+);
+
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M001', 'Diogo', 'Mascarenhas');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M002', 'Vinicius', 'Dias');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M003', 'Nico', 'Steppat');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M004', 'João', 'Roberto');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M005', 'Diogo', 'Mascarenhas');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M006', 'Alberto', 'Martins');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M007', 'Diogo', 'Oliveira');
+
+SELECT * FROM funcionarios ORDER BY 2;
+
+SELECT * FROM funcionarios ORDER BY 4 DESC, 3 DESC, 2;
+SELECT * FROM funcionarios ORDER BY sobrenome DESC, nome DESC, matricula;
+SELECT * FROM funcionarios ORDER BY funcionarios.sobrenome DESC, funcionarios.nome DESC, funcionarios.matricula;
+
+SELECT 	aluno.id   AS aluno_id,
+		aluno.nome AS "Nome do aluno", 
+		curso.id   AS curso_id,
+		curso.nome AS "Nome do curso"
+		FROM aluno
+		JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+		JOIN curso       ON curso.id             = aluno_curso.curso_id
+		ORDER BY 2, curso.id;    
+		
+SELECT * FROM funcionarios LIMIT 5;
+		
+SELECT * 
+	FROM funcionarios 
+	ORDER BY id
+	LIMIT 5      
+	OFFSET 5;     
+
+SELECT  COUNT(id), 
+		SUM(id), 
+	 	MAX(id), 
+		MIN(id),
+		ROUND (AVG(id), 0)
+		FROM funcionarios;
+		
+--round arredonda(no caso para 0 casas decimais)
+
+SELECT  COUNT(id), 
+		ROUND (AVG(id), 0)
+		FROM aluno;
+
+--DISTINCT: todos os dados nao se repetirao, n aceita numeros
+
+SELECT DISTINCT nome 
+	FROM funcionarios
+	ORDER BY nome;
+	
+--GROUP BY: permite usar COUNT, aceita numero
+
+SELECT 
+		nome, 
+		sobrenome,
+		COUNT(id)
+	FROM funcionarios
+	GROUP BY nome, sobrenome
+	ORDER BY nome;
+	
+
+SELECT curso.nome, COUNT(aluno.id)
+		FROM aluno 
+		JOIN aluno_curso ON aluno.id = aluno_curso.aluno_id
+		JOIN curso On curso.id = aluno_curso.curso_id
+		GROUP BY 1
+		ORDER BY 1;
+
+--Filtrando consultas agrupadas
+SELECT * FROM aluno_curso;
+
+SELECT * FROM curso;
+SELECT * FROM aluno;
+
+SELECT  curso.nome, 
+		COUNT(aluno.id) 
+	FROM curso
+	LEFT JOIN aluno_curso On aluno_curso.curso_id = curso.id
+	LEFT JOIN aluno On aluno.id = aluno_curso.aluno_id
+	GROUP BY 1
+		HAVING COUNT(aluno.id) > 0;
+
+--Não pode usar funcao de agrupamento dentro de WHERE, nesse caso se usaria HAVING
+
+SELECT nome, COUNT(id)
+	FROM funcionarios
+	GROUP BY nome
+	HAVING COUNT(id) > 1;
+
 		
